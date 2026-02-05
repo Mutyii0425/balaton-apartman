@@ -1,50 +1,51 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
-
+// 🛑 EZ A SOR NAGYON FONTOS A VERCELNEK:
 export const dynamic = 'force-dynamic';
-
 
 const prisma = new PrismaClient();
 
-
-// JÓVÁHAGYÁS (Amikor a "Publikál" gombra nyomsz)
+// MÓDOSÍTÁS (PATCH) - Pl. Amikor rányomsz az "Elfogad" vagy "Elutasít" gombra
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // 1. Kivesszük az ID-t a linkből
-    const { id } = await params;
-    const reviewId = parseInt(id);
-
-    // 2. Frissítjük az adatbázist (isApproved = true)
-    const updatedReview = await prisma.review.update({
-      where: { id: reviewId },
-      data: { isApproved: true },
+    const { id } = await params; // Next.js 15-ben await kell
+    const bookingId = parseInt(id);
+    
+    // A kérésből jön az új státusz (pl. { status: 'CONFIRMED' })
+    const body = await request.json();
+    
+    const updatedBooking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: body,
     });
 
-    return NextResponse.json(updatedReview);
+    return NextResponse.json(updatedBooking);
   } catch (error) {
-    console.error("Hiba a vélemény jóváhagyásakor:", error);
-    return NextResponse.json({ error: 'Hiba történt' }, { status: 500 });
+    console.error("Hiba a foglalás frissítésekor:", error);
+    return NextResponse.json({ error: 'Hiba a frissítéskor' }, { status: 500 });
   }
 }
 
-// TÖRLÉS (Amikor a kuka ikonra nyomsz)
+// TÖRLÉS (DELETE) - Amikor a kukára nyomsz
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
+    const bookingId = parseInt(id);
     
-    await prisma.review.delete({
-      where: { id: parseInt(id) },
+    await prisma.booking.delete({
+      where: { id: bookingId },
     });
 
     return NextResponse.json({ message: 'Törölve' });
   } catch (error) {
-    return NextResponse.json({ error: 'Hiba törléskor' }, { status: 500 });
+    console.error("Hiba a törléskor:", error);
+    return NextResponse.json({ error: 'Hiba a törléskor' }, { status: 500 });
   }
 }
