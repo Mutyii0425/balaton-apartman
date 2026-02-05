@@ -1,11 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 1. Kikapcsoljuk a TypeScript szigorú ellenőrzését buildkor
+  // 1. TypeScript hibák figyelmen kívül hagyása buildnél
   typescript: {
     ignoreBuildErrors: true,
   },
-  // 2. Kikapcsoljuk az ESLint szigorú ellenőrzését is
+  // 2. ESLint hibák figyelmen kívül hagyása
   eslint: {
     ignoreDuringBuilds: true,
   },
