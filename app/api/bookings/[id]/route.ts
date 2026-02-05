@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
+
+export const dynamic = 'force-dynamic';
+
+
 const prisma = new PrismaClient();
+
 
 // JÓVÁHAGYÁS (Amikor a "Publikál" gombra nyomsz)
 export async function PATCH(
