@@ -1,21 +1,16 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma'; // <--- ITT A VÁLTOZÁS! (A közösből importáljuk)
 
-// 🛑 EZ A SOR NAGYON FONTOS A VERCELNEK:
 export const dynamic = 'force-dynamic';
 
-const prisma = new PrismaClient();
-
-// MÓDOSÍTÁS (PATCH) - Pl. Amikor rányomsz az "Elfogad" vagy "Elutasít" gombra
+// MÓDOSÍTÁS (PATCH)
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params; // Next.js 15-ben await kell
+    const { id } = await params;
     const bookingId = parseInt(id);
-    
-    // A kérésből jön az új státusz (pl. { status: 'CONFIRMED' })
     const body = await request.json();
     
     const updatedBooking = await prisma.booking.update({
@@ -25,12 +20,12 @@ export async function PATCH(
 
     return NextResponse.json(updatedBooking);
   } catch (error) {
-    console.error("Hiba a foglalás frissítésekor:", error);
+    console.error("Hiba:", error);
     return NextResponse.json({ error: 'Hiba a frissítéskor' }, { status: 500 });
   }
 }
 
-// TÖRLÉS (DELETE) - Amikor a kukára nyomsz
+// TÖRLÉS (DELETE)
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -45,7 +40,7 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Törölve' });
   } catch (error) {
-    console.error("Hiba a törléskor:", error);
+    console.error("Hiba:", error);
     return NextResponse.json({ error: 'Hiba a törléskor' }, { status: 500 });
   }
 }
