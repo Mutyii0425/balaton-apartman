@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  phone       String?
+  guests      Int      @default(0) // Ez marad az összesített létszám miatt
+  adults      Int      @default(2) // <--- ÚJ: Felnőttek száma
+  children    Int      @default(0) // <--- ÚJ: Gyerekek száma
+  hasDog      Boolean  @default(false) // <--- ÚJ: Van-e kutya?
+  needsHeating Boolean @default(false) // <--- ÚJ: Kell-e fűtés?
+  totalPrice  Int      @default(0)     // <--- ÚJ: A végösszeg, amit kiszámoltunk
+  apartmentId Int      @default(1)
+  startDate   DateTime
+  endDate     DateTime
+  status      String   @default("PENDING")
+  paymentMethod String?
+  createdAt   DateTime @default(now())
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  name      String
+  rating    Int      // Hány csillag (1-5)
+  text      String
+  isApproved Boolean @default(false) // Csak akkor jelenik meg, ha az admin engedélyezi!
+  createdAt DateTime @default(now())
+}
